@@ -26,8 +26,8 @@
 
 // --------------------
 
-#define API_KEY "AIzaSyDNDQz9SrA6qy9GR9FG6q2qVBok8LnjV-Y"
-#define DATABASE_URL "https://luva-inteligente-default-rtdb.firebaseio.com/"
+#define API_KEY "API DO FIREBASE AQUI"
+#define DATABASE_URL "URL DO FIREBASE AQUI"
 
 // --------------------
 
