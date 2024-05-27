@@ -26,7 +26,7 @@
 
 // --------------------
 
-#define API_KEY "API DO FIREBASE AQUI"
+#define API_KEY "API KEY DO FIREBASE AQUI"
 #define DATABASE_URL "URL DO FIREBASE AQUI"
 
 // --------------------
@@ -43,10 +43,53 @@ bool signupOK = false;
 
 // --------------------
 
-void setup() {
+int readCloudInt(String var_name) 
+{
+  if (Firebase.RTDB.getInt(&fbdo, var_name)) 
+  {  
+    int returned_value = fbdo.intData();
+
+    return returned_value;
+  } 
+  
+  else 
+  {
+    debug("FAILED REASON: ");
+    debug(fbdo.errorReason());
+    debugln();
+
+    return 9999999;
+  }
+}
+
+void writeCloudInt(String var_name, int var_value) 
+{
+  if(Firebase.RTDB.setInt(&fbdo, var_name, var_value)) 
+  {
+    debug("SENT TO: ");
+    debug(fbdo.dataPath());
+    debug(" ");
+    debug(fbdo.dataType());
+    debug(" ");
+    debug(var_value);
+    debugln();
+  } 
+  
+  else 
+  {
+    debug("FAILED REASON: ");
+    debug(fbdo.errorReason());
+    debugln();
+  }
+}
+
+// --------------------
+
+void setup() 
+{
   debugln("SETUP");
 
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   // --------------------
 
@@ -86,34 +129,17 @@ void setup() {
 }
 
 void loop() {
-  debugln("LOOP");
+  //debugln("LOOP");
 
-  if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 5000 || sendDataPrevMillis == 0))
-  {
-    sendDataPrevMillis = millis();
-    
-    if(Firebase.RTDB.setInt(&fbdo, "horario", 1))
-    {
-      Serial.println(); 
-      Serial.println("salvo em ");
-      Serial.println(fbdo.dataPath());
-      Serial.println(fbdo.dataType());
-    }
-    
-    if (Firebase.RTDB.getInt(&fbdo, "horario")) 
-    {  
-      if(fbdo.intData() == 1)
-      {
-        Serial.println("A");
-      }
-    }
-    
-    else 
-    {
-      Serial.println("Falhou ");
-      Serial.println(fbdo.errorReason());
+  if (millis() - sendDataPrevMillis > 500 || sendDataPrevMillis == 0) {
+    if (Firebase.ready() && signupOK) {
+      sendDataPrevMillis = millis();
+      
+      writeCloudInt("horario", 1);
+      
+      int a = readCloudInt("horario");
+
+      debugln(a);
     }
   }
-
-  delay(1000);
 }
